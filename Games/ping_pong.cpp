@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include "ping_pong.h"
 #include "utils.h"
 
@@ -10,50 +10,51 @@ void PingPongGame() {
 
     short score_p1 = 0, score_p2 = 0;
     short coord_p1 = HEIGHT / 2, coord_p2 = HEIGHT / 2;
-    short b_x = (WIDTH + 2) / 2, b_y = 5;
+    COORD ball = { (WIDTH + 2) / 2, 5 };
     short nb_x = 1, nb_y = 1;
 
     DrawField();
     while (score_p1 < WIN_SCORE && score_p2 < WIN_SCORE) {
-        DrawbBallPLayers(coord_p1, coord_p2, b_x, b_y, score_p1, score_p2);
+        DrawbBallPLayers(coord_p1, coord_p2, ball, score_p1, score_p2);
         MovePlayers(coord_p1, coord_p2);
         //move_ball(coord_p1, coord_p2);
-        if (b_y == 1) nb_y = 1;
-        if (b_y == HEIGHT) nb_y = -1;
+        if (ball.Y == 1) nb_y = 1;
+        if (ball.Y == HEIGHT) nb_y = -1;
 
-        if (b_x == 1) {
-            if (b_y >= coord_p1 - 1 && b_y <= coord_p1 + 1) {
+        if (ball.X == 1) {
+            if (ball.Y >= coord_p1 - 1 && ball.Y <= coord_p1 + 1) {
                 nb_x = 1;
-                b_x += nb_x;
+                ball.X += nb_x;
             }
             else {
                 score_p2++;
-                b_x = (WIDTH + 2) / 2;
-                b_y = (HEIGHT + 2) / 2;
+                ball.X = (WIDTH + 2) / 2;
+                ball.Y = (HEIGHT + 2) / 2;
             }
         }
-        else if (b_x == WIDTH) {
-            if (b_y >= coord_p2 - 1 && b_y <= coord_p2 + 1) {
+        else if (ball.X == WIDTH) {
+            if (ball.Y >= coord_p2 - 1 && ball.Y <= coord_p2 + 1) {
                 nb_x = -1;
-                b_x += nb_x;
+                ball.X += nb_x;
             }
             else {
                 score_p1++;
-                b_x = (WIDTH + 2) / 2;
-                b_y = (HEIGHT + 2) / 2;
+                ball.X = (WIDTH + 2) / 2;
+                ball.Y = (HEIGHT + 2) / 2;
             }
         }
         else {
-            b_x += nb_x;
-            b_y += nb_y;
+            ball.X += nb_x;
+            ball.Y += nb_y;
         }
     }
 
-    score_p1 == WIN_SCORE ? printf("\nпоздравляем победителя! (1 игрок)\n")
-        : printf("\nпоздравляем победителя! (2 игрок)\n");
+    cout << "\nпоздравляем победителя! (";
+    score_p1 == WIN_SCORE ? cout << 1 : cout << 2;
+    cout << "игрок)\n";
 }
 
-void DrawbBallPLayers(short coord_p1, short coord_p2, short b_x, short b_y, short score_p1, short score_p2) {
+void DrawbBallPLayers(short coord_p1, short coord_p2, COORD ball, short score_p1, short score_p2) {
     for (short y = 1; y < HEIGHT + 1; ++y) {
         GoToXY(1, y);
         for (short x = 1; x < WIDTH + 2; ++x) {
@@ -63,7 +64,7 @@ void DrawbBallPLayers(short coord_p1, short coord_p2, short b_x, short b_y, shor
                 GoToXY(x, y);
                 cout << '|';
             }
-            else if (x == b_x && y == b_y) {
+            else if (x == ball.X && y == ball.Y) {
                 GoToXY(x, y);
                 cout << 'o';
             }
@@ -71,8 +72,8 @@ void DrawbBallPLayers(short coord_p1, short coord_p2, short b_x, short b_y, shor
                 cout << ' ';
         }
     }
-    GoToXY(0, HEIGHT + 2);
-    cout << score_p1 << score_p2;
+    GoToXY(40, HEIGHT + 2);
+    cout << score_p1 << ':' << score_p2;
 }
 
 void MovePlayers(short& coord_p1, short& coord_p2) {
